@@ -1,0 +1,19 @@
+<source file="temp/1/io.jsonwebtoken.impl.io.CodecPolicy.jimple" startline="9" endline="29">
+static void < clinit > () {
+    io.jsonwebtoken.impl.io.CodecPolicy v0, v1, v3, v4;
+    io.jsonwebtoken.impl.io.CodecPolicy [] v2;
+    v0 = new io.jsonwebtoken.impl.io.CodecPolicy;
+    specialinvoke v0.< io.jsonwebtoken.impl.io.CodecPolicy : void < init > (java.lang.String, int) > ("STRICT", 0);
+    < io.jsonwebtoken.impl.io.CodecPolicy : io.jsonwebtoken.impl.io.CodecPolicy STRICT > = v0;
+    v1 = new io.jsonwebtoken.impl.io.CodecPolicy;
+    specialinvoke v1.< io.jsonwebtoken.impl.io.CodecPolicy : void < init > (java.lang.String, int) > ("LENIENT", 1);
+    < io.jsonwebtoken.impl.io.CodecPolicy : io.jsonwebtoken.impl.io.CodecPolicy LENIENT > = v1;
+    v2 = newarray (io.jsonwebtoken.impl.io.CodecPolicy) [2];
+    v3 = < io.jsonwebtoken.impl.io.CodecPolicy : io.jsonwebtoken.impl.io.CodecPolicy STRICT >;
+    v2 [0] = v3;
+    v4 = < io.jsonwebtoken.impl.io.CodecPolicy : io.jsonwebtoken.impl.io.CodecPolicy LENIENT >;
+    v2 [1] = v4;
+    < io.jsonwebtoken.impl.io.CodecPolicy : io.jsonwebtoken.impl.io.CodecPolicy [] $VALUES > = v2;
+    return;
+}
+</source>
