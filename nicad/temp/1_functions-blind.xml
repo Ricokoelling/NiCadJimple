@@ -1,0 +1,19 @@
+<source file="temp/1/io.jsonwebtoken.impl.io.CodecPolicy.jimple" startline="9" endline="29">
+static void < clinit > () {
+    x.x.x.x.x x, x, x, x;
+    x.x.x.x.x [] x;
+    x = new x.x.x.x.x;
+    specialinvoke x.< x.x.x.x.x : void < init > (x.x.x, int) > ("x", 1);
+    < x.x.x.x.x : x.x.x.x.x x > = x;
+    x = new x.x.x.x.x;
+    specialinvoke x.< x.x.x.x.x : void < init > (x.x.x, int) > ("x", 1);
+    < x.x.x.x.x : x.x.x.x.x x > = x;
+    x = newarray (x.x.x.x.x) [1];
+    x = < x.x.x.x.x : x.x.x.x.x x >;
+    x [1] = x;
+    x = < x.x.x.x.x : x.x.x.x.x x >;
+    x [1] = x;
+    < x.x.x.x.x : x.x.x.x.x [] x > = x;
+    return;
+}
+</source>
