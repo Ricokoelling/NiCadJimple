@@ -1,0 +1,36 @@
+-- Tool --
+       Tool: 1 - NiCad
+Description: Default Configuration
+    #Clones: 494
+
+-- Versioning --
+ BigCloneEval: Release Version 0.1
+BigCloneBench: Version 1.0 (2016-06-19)
+-- Selected Clones --
+         Min Lines: 15
+         Max Lines: null
+        Min Tokens: null
+        Max Tokens: null
+  Min Pretty Lines: null
+  Max Pretty Lines: null
+        Min Judges: null
+    Min Confidence: null
+          Sim Type: BOTH
+Minimum Similarity:
+
+-- Clone Matcher --
+Coverage Matcher.  Coverage Ratio = 0.7, minimum raito is of reference clone: null
+
+-- Clone Types --
+Type-1
+Type-2
+Very-Strongly Type-3: Clone similarity in range [90,100) after pretty-printing and identifier/literal normalization.
+     Strongly Type-3: Clone similarity in range [70, 90) after pretty-printing and identifier/literal normalization.
+   Moderately Type-3: Clone similarity in range [50, 70) after pretty-printing and identifier/literal normalization.
+Weakly Type-3/Type-4: Clone similarity in range [ 0, 50) after pretty-printing and identifier/literal normalization.
+
+================================================================================
+	All Functionalities
+================================================================================
+-- Recall Per Clone Type (type: numDetected / numClones = recall) --
+              Type-1: 2 / 20793 = 9.618621651517337E-5

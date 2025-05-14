@@ -7,24 +7,9 @@
 TARGET_FOLDER="$(realpath $1)"
 SCRIPT_DIR="$(dirname "$(realpath "$0")")"
 SOOT_PATH="$(realpath $SCRIPT_DIR/ressources/soot-4.6.0-jar-with-dependencies.jar)"
-OUTPUT_PATH="$(realpath $SCRIPT_DIR/output)"
-SRC_PATH="$(realpath $SCRIPT_DIR/src/create_mapper.java)"
-BUILD_PATH="$(realpath $SCRIPT_DIR/build)"
 
 total_jar_files=$(find "$TARGET_FOLDER" -type f -name "*.jar" | wc -l)
 echo "Total .jar files to process: $total_jar_files"
-
-#cleanup
-rm -rf "$OUTPUT_PATH"/* "$OUTPUT_PATH"/.[!.]* "$OUTPUT_PATH"/..?
-rm -rf "$BUILD_PATH"/* "$BUILD_PATH"/.[!.]* "$BUILD_PATH"/..?
-
-# pre-build
-javac -d build $SRC_PATH
-
-echo "Create output_java.csv"
-cd "./ByteCodeInfos"
-./gradlew -Dorg.gradle.java.home=/usr/lib/jvm/java-1.8.0-openjdk-amd64/ run -PmainClass=ByteCodeInfos --args="-d="$TARGET_FOLDER" -t=8  -o="$OUTPUT_PATH/mapper_java.csv" "
-cd ../
 
 echo "create jimple files"
 processed_jar_files=0
@@ -52,6 +37,3 @@ find "$TARGET_FOLDER" -type f -name "*.jar" | while read -r JAR_FILE; do
 	rm $JAR_FILE
 	rm $jar_name.java
 done
-
-echo "create mapper.csv"
-java -cp build create_mapper "$TARGET_FOLDER" "$OUTPUT_PATH/mapper_java.csv" "$OUTPUT_PATH/mapper.csv"
