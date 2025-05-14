@@ -8,14 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 
-/*
- * TODO
- * - include nicad stuff (ask if I should do it over BigCloneEval (PROB))
- * - export stuff from nicad
- * - write remapper 
- * - cleanup 
- */
-
 public class create_mapper {
 
 	public static class credentials{
@@ -112,12 +104,18 @@ public class create_mapper {
 				String[] parts = line.split("!");
 				credentials cred = new credentials(parts[0], parts[1], parts[2]);
 				identifier id = new identifier(parts[3], Integer.parseInt(parts[4]), Integer.parseInt(parts[5]));
+				//System.out.println(id.toString());
 				if(files.containsKey(cred)){
 					files.get(cred).add(id);
 				}else{
 					files.put(cred, new ArrayList<>(Arrays.asList(id)));
 				}
 			}
+			/*for(List<identifier> Li: files.values()){
+				for(identifier i: Li){
+					System.out.println(i.toString());
+				}
+			}*/
 		}catch (IOException e) {
             e.printStackTrace();
         }
@@ -144,9 +142,14 @@ public class create_mapper {
 
 			if(files.containsKey(cred)){
 				List<identifier> id = files.get(cred);
+				for(identifier k: id){
+					//System.out.println(k.toString());
+				}
+
 				while((line = reader.readLine()) != null){
 					if(removeSpaces(line).equals(removeSpaces(id.get(count).getFunctionName()))){
 						if((id.get(count).getEndLine() - id.get(count).getStartLine()) < 15){
+							//System.out.println((id.get(count).getStartLine() + " " + id.get(count).getEndLine()) + " lose");
 							if(counts){
 								endLine = currentLine - 1;
 								counts = false;
@@ -162,6 +165,7 @@ public class create_mapper {
 								writer.flush();
 							}
 						}else{
+							//System.out.println((id.get(count).getStartLine() + " " + id.get(count).getEndLine()));
 							if(counts){
 								endLine = currentLine - 1;
 								String writeString = splittedPath[splittedPath.length-2] + "," 

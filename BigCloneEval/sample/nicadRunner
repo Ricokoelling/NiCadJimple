@@ -12,19 +12,19 @@ root=`dirname $1`
 dir=`basename $1`
 path=$root/$dir
 
-# Don't change filepaths since this is the relativ path to nicad
-cd /mnt/e/Bachelorarbeit/Thesis/MYWORK/nicad
+
+cd /mnt/e/Bachelorarbeit/Thesis/NiCadjimple/nicad
 
 # Execute NiCad, Suppress Output
-./nicad6 functions jimple "$path" myconfig #> /dev/null 2> /dev/null
+./nicad6 functions jimple "$path" myconfig > /dev/null 2> /dev/null
 
 # Convert Detected Clones Into BigCloneEval Format
 #java -jar Convert.jar ${path}_functions-blind-abstract-clones/${dir}_functions-blind-abstract-clones-0.30.xml 2> /dev/null
 
-cat ${path}_functions-blind-clones/${dir}_functions-blind-clones-0.22.xml | sed 's$<source file="$$g' | sed 's$" startline="$,$g' | sed 's$" endline="$,$g' | sed 's$" pcid=.*"></source>$$g' | sed 's$<clone nlines=.*$$g' | sed 's$</clone>.*$$g' | sed 's$</clones>$$g' |sed 's$<clones>$$g' | sed 's$<cloneinfo.*$$g' | sed 's$<systeminfo.*$$g' | sed 's$<runinfo.*$$g' | sed '/^$/d' | paste -d ',' - - | sed "s#${path}/##g" | sed 's#/#,#g'
+cat ${path}_functions-blind-clones/${dir}_functions-blind-clones-0.00.xml | sed 's$<source file="$$g' | sed 's$" startline="$,$g' | sed 's$" endline="$,$g' | sed 's$" pcid=.*"></source>$$g' | sed 's$<clone nlines=.*$$g' | sed 's$</clone>.*$$g' | sed 's$</clones>$$g' |sed 's$<clones>$$g' | sed 's$<cloneinfo.*$$g' | sed 's$<systeminfo.*$$g' | sed 's$<runinfo.*$$g' | sed '/^$/d' | paste -d ',' - - | sed "s#${path}/##g" | sed 's#/#,#g'
 
 # Cleanup
-rm -rf ${path}_functions-blind-abstract-clones > /dev/null 2> /dev/null
+rm -rf ${path}_functions-blind-clones > /dev/null 2> /dev/null
 rm ${path}_functions-blind-abstract.xml > /dev/null 2> /dev/null
 rm ${path}_functions-clones*.log > /dev/null 2> /dev/null
 rm ${path}_functions-blind.xml > /dev/null 2> /dev/null
