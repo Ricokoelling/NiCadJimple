@@ -73,7 +73,6 @@ public class CloneMapper {
                 return endLine2;
             }
 
-        
             // toString-Methode
             @Override
             public String toString() {
@@ -89,34 +88,50 @@ public class CloneMapper {
             }
         }
     
+    /** 
+     * Reads content from a file
+     * @param filePath 
+     * @return List<String> containing all line of the file 
+     * @throws IOException
+     */
     public static List<String> getFileContent(String filePath) throws IOException {
         return Files.readAllLines(Paths.get(filePath));
     }
 
-    public static List<String> getLargeFileContent(String filePath, int blockNumber ) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(filePath));
-        List<String> output = new ArrayList<>();
+    // /** 
+    //  * Reads content from larger files (100MB+), is used in blocks BLOCK_SIZE
+    //  * @param filePath
+    //  * @param blockNumber current block
+    //  * @return List<String> with BLOCK_SIZE lines from the file 
+    //  * @throws IOException
+    //  */
+    // public static List<String> getLargeFileContent(String filePath, int blockNumber ) throws IOException {
+    //     BufferedReader reader = new BufferedReader(new FileReader(filePath));
+    //     List<String> output = new ArrayList<>();
+    //     int startLine = blockNumber * BLOCK_SIZE;
+    //     int currentLine = -1;
+    //     String line;
+    //     // Überspringe Zeilen bis zur gewünschten Block-Startzeile
+    //     while ((line = reader.readLine()) != null && currentLine < startLine) {
+    //         currentLine++;
+    //     }
+    //     // Lese den aktuellen Block
+    //     int linesRead = 0;
+    //     while (line != null && linesRead < BLOCK_SIZE) {
+    //         output.add(line);
+    //         line = reader.readLine();
+    //         linesRead++;
+    //     }
+    //     reader.close();
+    //     return output;
+    // }
 
-        int startLine = blockNumber * BLOCK_SIZE;
-        int currentLine = 0;
-        String line;
-
-        // Überspringe Zeilen bis zur gewünschten Block-Startzeile
-        while ((line = reader.readLine()) != null && currentLine < startLine) {
-            currentLine++;
-        }
-
-        // Lese den aktuellen Block
-        int linesRead = 0;
-        while (line != null && linesRead < BLOCK_SIZE) {
-            output.add(line);
-            line = reader.readLine();
-            linesRead++;
-        }
-        reader.close();
-        return output;
-    }
-
+    /** 
+     * Puts inputs and mappings in the same format for easier compare
+     * @param inputs content from the mapper file
+     * @param mappings content from the clones found by BCE
+     * @return List<String> with in findClones() found clones
+     */
     public static List<String> mapOutput(List<String> inputs, List<String> mappings) {
         List<Clone> bce_clones = new ArrayList<>();
         HashMap<String, List<String>> mapper_input = new HashMap<>();
@@ -144,6 +159,12 @@ public class CloneMapper {
         return findClones(bce_clones, mapper_input);
     }
 
+    /** 
+     * Works through BCE found clones (BLOCK_SIZE) and filters out the ones which are also found in the mapperfile
+     * @param bce_clones BLOCK_SIZE of BCE found clones
+     * @param mapper_input full mapper 
+     * @return List<String> of all clones
+     */
     public static List<String> findClones(List<Clone> bce_clones, HashMap<String, List<String>> mapper_input ){
         List<String> output = new ArrayList<>();
         for(Clone bce: bce_clones){
@@ -175,6 +196,13 @@ public class CloneMapper {
 
     }
 
+    /**
+     * Checks if a clones Start and Endline are within boundaries
+     * @param start mapper startline
+     * @param end mapper endline
+     * @param value BCE start- and endline
+     * @return either the BCE start- and endline or null 
+     */
     public static String cloneTolerance(int start, int end, String[] value){
         int jimpleStart = Integer.parseInt(value[3]);
         int jimpleEnd = Integer.parseInt(value[4]);
@@ -186,38 +214,39 @@ public class CloneMapper {
 
     }
 
-    public static void writeOutputToCsv(List<String> outputs, BufferedWriter writer) throws IOException {
-        for (String output : outputs) {
-            writer.write(output);
-            writer.newLine();
-        }
-        writer.flush();
-    }
+    // public static void writeOutputToCsv(List<String> outputs, BufferedWriter writer) throws IOException {
+    //     for (String output : outputs) {
+    //         writer.write(output);
+    //         writer.newLine();
+    //     }
+    //     writer.flush();
+    // }
 
+    /**
+     * Reads fileinput and starts threads for simultaneously work 
+     * @param mapper_filepath 
+     * @param bce_filepath
+     * @param output_filepath
+     * @throws Exception
+     */
     public static void ReadAndWork_BCE(Path mapper_filepath, Path bce_filepath, Path output_filepath) throws Exception{
 
-        // Datei 1 einlesen
         List<String> dataFile1 = Files.readAllLines(mapper_filepath);
-
-        // Output Writer mit Synchronisierung
         BufferedWriter writer = Files.newBufferedWriter(output_filepath);
         Object writeLock = new Object();
-
-        // BlockingQueue zur Kommunikation
         BlockingQueue<List<String>> workQueue = new ArrayBlockingQueue<>(THREAD_COUNT);
 
-        // Fortschrittszähler
+        // progress counter
         AtomicInteger blockCounter = new AtomicInteger(0);
         AtomicInteger totalLineCounter = new AtomicInteger(0);
 
-        // Worker-Threads starten
         ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
         for (int i = 0; i < THREAD_COUNT; i++) {
             executor.submit(() -> {
                 try {
                     while (true) {
                         List<String> block = workQueue.take();
-                        if (block.isEmpty()) break; // Stoppsignal
+                        if (block.isEmpty()) break;
 
                         List<String> result = mapOutput(dataFile1, block);
 
@@ -238,20 +267,7 @@ public class CloneMapper {
             });
         }
 
-        // Reader für Datei 2
         try (BufferedReader reader = Files.newBufferedReader(bce_filepath)) {
-            // Header einmalig schreiben
-            String header = reader.readLine();
-            if (header == null) {
-                System.out.println("Datei2 ist leer.");
-                return;
-            }
-            synchronized (writeLock) {
-                writer.write(header);
-                writer.newLine();
-            }
-
-            // Datei streamend blockweise einlesen
             List<String> buffer = new ArrayList<>(BLOCK_SIZE);
             String line;
             while ((line = reader.readLine()) != null) {
@@ -261,13 +277,9 @@ public class CloneMapper {
                     buffer.clear();
                 }
             }
-
-            // letzten Block senden, falls nicht leer
             if (!buffer.isEmpty()) {
                 workQueue.put(new ArrayList<>(buffer));
             }
-
-            // Threads beenden (leerer Block = Stoppsignal)
             for (int i = 0; i < THREAD_COUNT; i++) {
                 workQueue.put(Collections.emptyList());
             }
@@ -285,14 +297,17 @@ public class CloneMapper {
             System.out.println("Usage: java CloneMapper <input_file> <mapping_file> <output_file>");
             return;
         }
-        Path mapper_filepath = Paths.get(args[0]);
-        Path bce_filePath = Paths.get(args[1]);
-        Path output_filePath = Paths.get(args[2]);
+        try{
+            Path mapper_filepath = Paths.get(args[0]);
+            Path bce_filePath = Paths.get(args[1]);
+            Path output_filePath = Paths.get(args[2]);
 
-        ReadAndWork_BCE(mapper_filepath,bce_filePath , output_filePath);
-
+            ReadAndWork_BCE(mapper_filepath,bce_filePath , output_filePath);
+        }catch (Exception e){
+            e.printStackTrace();
+            System.exit(0);
         } 
-        
+    }   
 }
 
 

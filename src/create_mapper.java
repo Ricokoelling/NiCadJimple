@@ -1,8 +1,4 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -66,6 +62,8 @@ public class create_mapper {
 			return "funcName: " + this.functionName + ", startLine: " + this.startLine + ", endLine: " + this.endLine;
 		}
 	}
+
+
 	public static void main(String[] args) {
 		final String TARGET_FOLDER= args[0];
 		final String JAVA_MAPPER = args[1];
@@ -80,6 +78,14 @@ public class create_mapper {
 			e.printStackTrace();
 		}
 	}
+
+	/**
+	 * Loops through files and folders for files found by ByteCodeInfos
+	 * @param dir
+	 * @param javaFiles
+	 * @param writer
+	 * 
+	 */
 	public static void loopFiles(File dir, HashMap<credentials, List<identifier>> javaFiles, BufferedWriter writer) {
 			if (dir.isDirectory()) {
 				File[] files = dir.listFiles();
@@ -95,6 +101,11 @@ public class create_mapper {
 			}
 	}
 
+	/**
+	 * Loops through ByteCodeInfos output and maps them to credentials and identifier 
+	 * @param filePath
+	 * @return Hashmap containing all infos about a function in the original files
+	 */
 	public static HashMap<credentials, List<identifier>> handleInputData(String filePath){
 		HashMap<credentials, List<identifier>> files = new HashMap<credentials, List<identifier>>();
 		try(BufferedReader reader = new BufferedReader(new FileReader(filePath));){
@@ -111,11 +122,6 @@ public class create_mapper {
 					files.put(cred, new ArrayList<>(Arrays.asList(id)));
 				}
 			}
-			/*for(List<identifier> Li: files.values()){
-				for(identifier i: Li){
-					System.out.println(i.toString());
-				}
-			}*/
 		}catch (IOException e) {
             e.printStackTrace();
         }
@@ -123,14 +129,27 @@ public class create_mapper {
 		return files;
 	}
 
+	/**
+	 * Works through jimple files to find start- and endline of all suitable functions
+	 * suitable functions are all functions which are over 15 total lines 
+	 * @param file jimple file
+	 * @param files Hashmap containing all infos about a function in the original files 
+	 * @param writer
+	 */
 	public static void handeFiles(File file, HashMap<credentials, List<identifier>> files, BufferedWriter writer){
 		try (BufferedReader reader = new BufferedReader(new FileReader(file))){
-			String line;
+			String line, preFileName = "", className="";
 			String[] splittedPath =  file.getAbsolutePath().split("/");
 			String filePath = splittedPath[splittedPath.length-3]+"/"+splittedPath[splittedPath.length-2];
-			String[] fileName = file.getName().split("_");
-			String preFileName = fileName[0];
-			String className = fileName[1].replace(".jimple", "");
+			int index = file.getName().indexOf('_');
+			if(index != -1){
+				preFileName = file.getName().substring(0,index);
+				className = file.getName().substring(index+1);
+				className = className.replace(".jimple", "");
+			}else{
+				System.exit(0);
+				System.err.println("NO UNDERSCORE");
+			}
 			credentials cred = new credentials(filePath, preFileName, className);
 
 			int count = 0;
@@ -143,13 +162,11 @@ public class create_mapper {
 			if(files.containsKey(cred)){
 				List<identifier> id = files.get(cred);
 				for(identifier k: id){
-					//System.out.println(k.toString());
 				}
 
 				while((line = reader.readLine()) != null){
 					if(removeSpaces(line).equals(removeSpaces(id.get(count).getFunctionName()))){
-						if((id.get(count).getEndLine() - id.get(count).getStartLine()) < 15){
-							//System.out.println((id.get(count).getStartLine() + " " + id.get(count).getEndLine()) + " lose");
+						if((id.get(count).getEndLine() - id.get(count).getStartLine())+1 < 15){
 							if(counts){
 								endLine = currentLine - 1;
 								counts = false;
@@ -157,7 +174,7 @@ public class create_mapper {
 																		+preFileName+".java" + "," 
 																		+id.get(count-1).getStartLine()+","
 																		+id.get(count-1).getEndLine()+","
-																		+startLine+","
+																		+(startLine+1)+","
 																		+endLine+","
 																		+file.getName().replace(".jimple", "");
 								writer.write(writeString);
@@ -165,14 +182,13 @@ public class create_mapper {
 								writer.flush();
 							}
 						}else{
-							//System.out.println((id.get(count).getStartLine() + " " + id.get(count).getEndLine()));
 							if(counts){
 								endLine = currentLine - 1;
 								String writeString = splittedPath[splittedPath.length-2] + "," 
 																		+preFileName+".java" + "," 
 																		+id.get(count-1).getStartLine()+","
 																		+id.get(count-1).getEndLine()+","
-																		+startLine+","
+																		+(startLine+1)+","
 																		+endLine+","
 																		+file.getName().replace(".jimple", "");
 								writer.write(writeString);
@@ -211,9 +227,13 @@ public class create_mapper {
 		}
 	}
 
-	// Methode zum Entfernen von Leerzeichen
+	/**
+	 *  Removes all space and tabs in contained in the jimple function name  
+	 * @param str
+	 * @return string without tabs and spaces
+	 */
 	public static String removeSpaces(String str) {
-		return str.replaceAll("\\s+", "");  // Entfernt alle Arten von Leerzeichen (einschließlich Tabs)
+		return str.replaceAll("\\s+", "");  
 	}
 
 }

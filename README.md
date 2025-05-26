@@ -32,3 +32,4 @@
         - `./importClones -t1 -c output.csv`
         - `./evaluateTool -t=1 --output="report" --mil=15`
         - this creates a the report for the created clones
+
