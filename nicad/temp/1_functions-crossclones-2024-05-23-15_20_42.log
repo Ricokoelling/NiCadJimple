@@ -1,0 +1,79 @@
+
+Do 23. Mai 15:20:42 CEST 2024
+./tools/crossclones.x temp/1_functions-blind.xml temp/2_functions-blind.xml 0.30 1 10000 > temp/1_functions-blind-crossclones/1_functions-blind-crossclones-0.30.xml
+Processing temp/1_functions-blind.xml vs temp/2_functions-blind.xml with difference threshold 30%, clone size 1 .. 10000 lines
+Reading system 1 pcs . done.
+Total 1/6000000 potential clones of 1 lines or more
+Used 16/100000000 total pc lines
+Used 451/600000000 unique line text chars
+ and 14/12000000 unique lines
+Reading system 2 pcs  done.
+Total 2/6000000 potential clones of 1 lines or more
+Used 28/100000000 total pc lines
+Used 665/600000000 unique line text chars
+ and 18/12000000 unique lines
+Sorting pcs . done.
+Finding clones  done.
+Total 1 pc comparisons
+Pruning embedded clone pairs . done.
+Pruned 0 embedded clone pairs
+Found 0 clone pairs
+Generating XML output 
+== pc1file
+temp/1_functions-blind.xml
+1_functions-blind.xml
+1
+functions-blind
+== pc2file
+temp/2_functions-blind.xml
+2_functions-blind.xml
+2
+
+ done.
+
+
+real	0m0,019s
+user	0m0,019s
+sys	0m0,000s
+
+Do 23. Mai 15:20:42 CEST 2024
+
+Do 23. Mai 15:20:42 CEST 2024
+./tools/cloneclasses.x temp/1_functions-blind-crossclones/1_functions-blind-crossclones-0.30.xml > temp/1_functions-blind-crossclones/1_functions-blind-crossclones-0.30-classes.xml
+Processing temp/1_functions-blind-crossclones/1_functions-blind-crossclones-0.30.xml
+Reading clone pairs . done.
+Total 0 pairs
+Sorting pairs . done.
+Indexing pairs  done.
+Computing classes  done.
+Clustered clone pairs into 0 classes
+Generating XML output  done.
+
+
+real	0m0,028s
+user	0m0,028s
+sys	0m0,000s
+
+Do 23. Mai 15:20:42 CEST 2024
+
+Do 23. Mai 15:20:42 CEST 2024
+./tools/getsource.x temp/1_functions-blind-crossclones/1_functions-blind-crossclones-0.30-classes.xml temp/1_functions-blind-crossclones/1_functions-blind-crossclones-0.30-classes-withsource.xml
+temp/1_functions-blind-crossclones/1_functions-blind-crossclones-0.30-classes.xml
+
+real	0m0,002s
+user	0m0,002s
+sys	0m0,000s
+
+Do 23. Mai 15:20:42 CEST 2024
+
+Do 23. Mai 15:20:42 CEST 2024
+./tools/tohtmlpairs.x temp/1_functions-blind-crossclones/1_functions-blind-crossclones-0.30-classes-withsource.xml temp/1_functions-blind-crossclones/1_functions-blind-crossclones-0.30-classes-withsource.html
+functions-blind
+30%
+
+real	0m0,002s
+user	0m0,002s
+sys	0m0,000s
+
+Do 23. Mai 15:20:42 CEST 2024
+
